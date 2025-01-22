@@ -1,4 +1,4 @@
-package com.fkisking.rpc.request;
+package com.fkisking.rpc.model;
 
 import lombok.Builder;
 import lombok.Data;
