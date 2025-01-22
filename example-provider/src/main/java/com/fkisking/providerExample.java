@@ -23,10 +23,15 @@ public class providerExample {
                 try {
                     ObjectOutputStream oos = new ObjectOutputStream(socket.getOutputStream());
                     ObjectInputStream ois = new ObjectInputStream(socket.getInputStream());
-                    rpcRequest rpcRequest = (rpcRequest) ois.readObject();
-                    Method method = userService.getClass().getMethod(rpcRequest.getMethodName(),rpcRequest.getParamsTypes());
-                    Object invoke = method.invoke(userService, rpcRequest.getParams());
-                    oos.writeObject(rpcResponse.success(invoke));
+                    // 读取客户端传过来的request
+                    rpcRequest request = (rpcRequest) ois.readObject();
+                    // 反射调用对应方法
+                    Method method = userService.getClass().getMethod(request.getMethodName(), request.getParamsTypes());
+                    Object invoke = method.invoke(userService, request.getParams());
+                    // 封装，写入response对象
+                    rpcResponse success = rpcResponse.success(invoke);
+                    oos.writeObject(success);
+                    System.out.println("服务端对象"+success);
                     oos.flush();
                 } catch (IOException | IllegalAccessException | InvocationTargetException e) {
                     throw new RuntimeException(e);
